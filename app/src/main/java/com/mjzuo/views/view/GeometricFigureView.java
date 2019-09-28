@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -32,9 +33,13 @@ public class GeometricFigureView extends View {
     private static final int OVAL_TYPE = 3;
     private static final int ROUND_CIRCLE_TYPE = 4;
     private static final int ARC_TYPE = 5;
+    private static final int MORE_FIGURE_TYPE = 6;
     private static final int FILL_CORLOR = 7;
     private static final int TEXT_CORLOR = 8;
     private static final int BITMAP_TYPE = 9;
+    private static final int CLIP_TYPE = 10;
+    private static final int STATE_TYPE = 11;
+    private static final int TRANSLATE_TYPE = 12;
 
     /**
      *  当前画形状的type：
@@ -48,6 +53,9 @@ public class GeometricFigureView extends View {
      *   7：填充颜色
      *   8：文本
      *   9: bitmap
+     *   10: 裁剪
+     *   11: 旋转
+     *   12: 平移
      */
     private int mDrawType;
 
@@ -104,6 +112,16 @@ public class GeometricFigureView extends View {
     private Paint mArcPaint;
 
     /**
+     * 多边形的path
+     */
+    private Path mMoreFIgurePath;
+
+    /**
+     * 多边形画笔
+     */
+    private Paint mMoreFigurePaint;
+
+    /**
      * 文本的画笔
      */
     private Paint textPaint;
@@ -117,6 +135,16 @@ public class GeometricFigureView extends View {
      * bitmap画笔
      */
     private Paint mBitmapPaint;
+
+    /**
+     * 裁剪的path
+     */
+    private Path mClipPath;
+
+    /**
+     * 裁剪的rectF
+     */
+    private RectF mClipRectF;
 
     private Context mContext;
 
@@ -162,6 +190,9 @@ public class GeometricFigureView extends View {
             case ARC_TYPE:
                 drawArc(canvas);
                 break;
+            case MORE_FIGURE_TYPE:
+                drawMoreFigure(canvas);
+                break;
             case FILL_CORLOR:
                 drawCorlor(canvas);
                 break;
@@ -170,6 +201,34 @@ public class GeometricFigureView extends View {
                 break;
             case BITMAP_TYPE:
                 drawBitmap(canvas);
+                break;
+            case CLIP_TYPE:
+                // 锁定当前画布
+                canvas.save();
+                // 裁剪画布
+                drawClipPathOnCanval(canvas);
+                // 画红色矩形
+                drawRect(canvas);
+                // 恢复画布
+                canvas.restore();
+                break;
+            case STATE_TYPE:
+                // 锁定当前画布
+                canvas.save();
+                // 画线
+                drawRotate(canvas);
+                // 恢复画布
+                canvas.restore();
+                break;
+            case TRANSLATE_TYPE:
+                // 锁定当前画布
+                canvas.save();
+                // 挪动画布
+                drawTranslate(canvas);
+                // 画线
+                drawRotate(canvas);
+                // 恢复画布
+                canvas.restore();
                 break;
         }
     }
@@ -197,7 +256,7 @@ public class GeometricFigureView extends View {
 
         // 画矩形
         rectPaint = new Paint();
-        rectPaint.setColor(Color.GRAY);
+        rectPaint.setColor(0xffab4448);
 
         // 画圆形
         circlePaint = new Paint();
@@ -216,6 +275,11 @@ public class GeometricFigureView extends View {
         // 弧
         mArcPaint = new Paint();
         mArcPaint.setColor(0xFFCCFFFF);
+
+        // 多边形
+        mMoreFigurePaint = new Paint();
+        mMoreFigurePaint.setColor(0xFFCCFFFF);
+        mMoreFigurePaint.setStyle(Paint.Style.STROKE);// 镶边
 
         // 文本
         textPaint = new Paint();
@@ -237,8 +301,8 @@ public class GeometricFigureView extends View {
          * @params stopY 线段终点y的坐标
          */
         canvas.drawLine(0,0
-                , CommentUtils.dip2px(mContext, 150)
-                , CommentUtils.dip2px(mContext, 150)
+                , CommentUtils.dip2px(mContext, 75)
+                , 0
                 , linePaint);
     }
 
@@ -256,7 +320,7 @@ public class GeometricFigureView extends View {
         if(rectF == null)
             rectF = new RectF(0, 0
                     , CommentUtils.dip2px(mContext, 150)// 单位都是px
-                    , CommentUtils.dip2px(mContext, 75));
+                    , CommentUtils.dip2px(mContext, 10));
         canvas.drawRect(rectF, rectPaint);
     }
 
@@ -328,6 +392,27 @@ public class GeometricFigureView extends View {
     }
 
     /**
+     *  绘制多边形，这里以三角形为例
+     */
+    private void drawMoreFigure(Canvas canvas) {
+        // 三角形的起点
+        if(mMoreFIgurePath == null)
+            mMoreFIgurePath = new Path();
+        // 三角形的起点
+        mMoreFIgurePath.moveTo(CommentUtils.dip2px(mContext, 75), 0);
+        // (75,0)->(0,75)画线
+        mMoreFIgurePath.lineTo(0, CommentUtils.dip2px(mContext, 75));
+        // (0,75)->(150,75)画线
+        mMoreFIgurePath.lineTo(CommentUtils.dip2px(mContext, 150)
+                , CommentUtils.dip2px(mContext, 75));
+        // (150,75)->(75,0)画线，常用close替代
+//        mMoreFIgurePath.lineTo(CommentUtils.dip2px(mContext, 75), 0);
+        // 闭合路径
+        mMoreFIgurePath.close();
+        canvas.drawPath(mMoreFIgurePath, mMoreFigurePaint);
+    }
+
+    /**
      * 填充颜色
      */
     private void drawCorlor(Canvas canvas) {
@@ -370,5 +455,54 @@ public class GeometricFigureView extends View {
                 , 0
                 , 0
                 , mBitmapPaint);
+    }
+
+    /**
+     * 画布的裁剪
+     */
+    private void drawClipPathOnCanval(Canvas canvas) {
+        if(mClipPath == null){
+            mClipPath = new Path();
+            // path为圆形矩形。裁剪圆形，弧等都同理
+            if(mClipRectF == null)
+                mClipRectF = new RectF(0, 0
+                        , CommentUtils.dip2px(mContext, 150)// 单位都是px
+                        , CommentUtils.dip2px(mContext, 150));
+            /**
+             * RectF：矩形轮廓
+             * rx：圆角矩形的圆角的x半径
+             * ry：圆角矩形的圆角的y半径
+             * direction：cw:顺时针、CCW:逆时针
+             */
+            mClipPath.addRoundRect(mClipRectF
+                    , CommentUtils.dip2px(mContext, 15)
+                    , CommentUtils.dip2px(mContext, 15)
+                    , Path.Direction.CW);
+        }
+        canvas.clipPath(mClipPath);
+    }
+
+    /**
+     * 画布的旋转
+     */
+    private void drawRotate(Canvas canvas) {
+        // 画10条线，画线的方法同上
+        for(int index = 0; index < 9; index ++){
+            // 画布旋转的角度,每次+10
+            canvas.rotate(10f);
+            drawLine(canvas);
+        }
+    }
+
+    /**
+     * 画布的平移
+     */
+    private void drawTranslate(Canvas canvas){
+        /**
+         * dx: 要在x中转换的距离
+         * dy: 要在y中转换的距离
+         */
+        canvas.translate(CommentUtils.dip2px(mContext, 75)
+                , CommentUtils.dip2px(mContext, 75));
     }
 }
