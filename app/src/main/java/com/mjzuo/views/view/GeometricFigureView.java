@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -27,19 +26,19 @@ import com.mjzuo.views.util.CommentUtils;
  */
 public class GeometricFigureView extends View {
 
-    private static final int LINE_TYPE = 0;
-    private static final int RECT_TYPE = 1;
-    private static final int CIRCLE_TYPE = 2;
-    private static final int OVAL_TYPE = 3;
-    private static final int ROUND_CIRCLE_TYPE = 4;
-    private static final int ARC_TYPE = 5;
-    private static final int MORE_FIGURE_TYPE = 6;
-    private static final int FILL_CORLOR = 7;
-    private static final int TEXT_CORLOR = 8;
-    private static final int BITMAP_TYPE = 9;
-    private static final int CLIP_TYPE = 10;
-    private static final int STATE_TYPE = 11;
-    private static final int TRANSLATE_TYPE = 12;
+    public static final int LINE_TYPE = 0;
+    public static final int RECT_TYPE = 1;
+    public static final int CIRCLE_TYPE = 2;
+    public static final int OVAL_TYPE = 3;
+    public static final int ROUND_CIRCLE_TYPE = 4;
+    public static final int ARC_TYPE = 5;
+    public static final int MORE_FIGURE_TYPE = 6;
+    public static final int FILL_CORLOR = 7;
+    public static final int TEXT_CORLOR = 8;
+    public static final int BITMAP_TYPE = 9;
+    public static final int CLIP_TYPE = 10;
+    public static final int STATE_TYPE = 11;
+    public static final int TRANSLATE_TYPE = 12;
 
     /**
      *  当前画形状的type：
@@ -142,6 +141,12 @@ public class GeometricFigureView extends View {
     private Path mClipPath;
 
     /**
+     * 裁剪画布里的矩形
+     */
+    private RectF cropRectF;
+    private Paint cropPaint;
+
+    /**
      * 裁剪的rectF
      */
     private RectF mClipRectF;
@@ -207,8 +212,8 @@ public class GeometricFigureView extends View {
                 canvas.save();
                 // 裁剪画布
                 drawClipPathOnCanval(canvas);
-                // 画红色矩形
-                drawRect(canvas);
+                // 在裁剪的画布内画矩形
+                drawRectInCropCanvas(canvas);
                 // 恢复画布
                 canvas.restore();
                 break;
@@ -236,6 +241,7 @@ public class GeometricFigureView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        // 只是简单介绍api，就不做处理了
     }
 
     private void initView(AttributeSet attrs) {
@@ -252,42 +258,48 @@ public class GeometricFigureView extends View {
     private void initPaint() {
         // 画线
         linePaint = new Paint();
-        linePaint.setColor(Color.WHITE);
+        linePaint.setColor(0xff868686);
 
         // 画矩形
         rectPaint = new Paint();
-        rectPaint.setColor(0xffab4448);
+        rectPaint.setColor(0xff868686);
 
         // 画圆形
         circlePaint = new Paint();
-        circlePaint.setColor(0xFFCCFFFF);
+        circlePaint.setColor(0xff868686);
 //        circlePaint.setStyle(Paint.Style.FILL);// 充满
         circlePaint.setStyle(Paint.Style.STROKE);// 镶边
 
         // 画圆角矩形
         mRoundRectFPaint = new Paint();
-        mRoundRectFPaint.setColor(0xFFCCFFFF);
+        mRoundRectFPaint.setColor(0xff868686);
 
         // 圆角矩形的画笔
         mOvalPaint = new Paint();
-        mOvalPaint.setColor(0xFFCCFFFF);
+        mOvalPaint.setColor(0xff868686);
 
         // 弧
         mArcPaint = new Paint();
-        mArcPaint.setColor(0xFFCCFFFF);
+        mArcPaint.setColor(0xff868686);
 
         // 多边形
         mMoreFigurePaint = new Paint();
-        mMoreFigurePaint.setColor(0xFFCCFFFF);
+        mMoreFigurePaint.setColor(0xff868686);
         mMoreFigurePaint.setStyle(Paint.Style.STROKE);// 镶边
 
         // 文本
         textPaint = new Paint();
-        textPaint.setColor(Color.RED);
+        textPaint.setColor(0xff868686);
         textPaint.setTextSize(CommentUtils.sp2px(mContext, 13));
 
         // 位图
         mBitmapPaint = new Paint();
+
+        // 裁剪画布里的矩形
+        cropPaint = new Paint();
+        cropRectF = new RectF(0, 0
+                , CommentUtils.dip2px(mContext, 75f)// 单位都是px
+                , CommentUtils.dip2px(mContext, 15f));
     }
 
     /**
@@ -301,8 +313,8 @@ public class GeometricFigureView extends View {
          * @params stopY 线段终点y的坐标
          */
         canvas.drawLine(0,0
-                , CommentUtils.dip2px(mContext, 75)
-                , 0
+                , CommentUtils.dip2px(mContext, 75f)
+                , CommentUtils.dip2px(mContext, 37.5f)
                 , linePaint);
     }
 
@@ -319,8 +331,8 @@ public class GeometricFigureView extends View {
          */
         if(rectF == null)
             rectF = new RectF(0, 0
-                    , CommentUtils.dip2px(mContext, 150)// 单位都是px
-                    , CommentUtils.dip2px(mContext, 10));
+                    , CommentUtils.dip2px(mContext, 75)// 单位都是px
+                    , CommentUtils.dip2px(mContext, 75));
         canvas.drawRect(rectF, rectPaint);
     }
 
@@ -351,8 +363,8 @@ public class GeometricFigureView extends View {
          */
         if(mRoundRectF == null)
             mRoundRectF = new RectF(0, 0
-                    , CommentUtils.dip2px(mContext, 150)// 单位都是px
-                    , CommentUtils.dip2px(mContext, 75));
+                    , CommentUtils.dip2px(mContext, 150f)// 单位都是px
+                    , CommentUtils.dip2px(mContext, 75f));
         canvas.drawRoundRect(mRoundRectF
                 , CommentUtils.dip2px(mContext, 36.5f)
                 , CommentUtils.dip2px(mContext, 18.25f)
@@ -365,8 +377,8 @@ public class GeometricFigureView extends View {
     private void drawOval(Canvas canvas) {
         if(mOvalRectF == null)
             mOvalRectF = new RectF(0, 0
-                    , CommentUtils.dip2px(mContext, 75)// 单位都是px
-                    , CommentUtils.dip2px(mContext, 37.5f));
+                    , CommentUtils.dip2px(mContext, 112.5f)// 单位都是px
+                    , CommentUtils.dip2px(mContext, 75f));
         canvas.drawOval(mOvalRectF, mOvalPaint);
     }
 
@@ -382,11 +394,11 @@ public class GeometricFigureView extends View {
          */
         if(mArcRectF == null)
             mArcRectF = new RectF(0, 0
-                    , CommentUtils.dip2px(mContext, 150)// 单位都是px
-                    , CommentUtils.dip2px(mContext, 75));
+                    , CommentUtils.dip2px(mContext, 112.5f)// 单位都是px
+                    , CommentUtils.dip2px(mContext, 112.5f));
         canvas.drawArc(mArcRectF
-                , -90
-                , 180
+                , -150
+                , 120
                 , true
                 , mArcPaint);
     }
@@ -429,8 +441,8 @@ public class GeometricFigureView extends View {
          *  textY：绘制文本基线的y坐标
          */
         canvas.drawText("我和我的祖国"
-                , CommentUtils.dip2px(mContext, 75)
-                , CommentUtils.dip2px(mContext, 75)
+                , CommentUtils.dip2px(mContext, 0f)
+                , CommentUtils.dip2px(mContext, 75f)
                 , textPaint);
     }
 
@@ -448,12 +460,12 @@ public class GeometricFigureView extends View {
             mBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.icon_android);
             // 将mBitmap缩放成固定大小
             mBitmap = BitmapUtils.conversionBitmap(mBitmap
-                    , CommentUtils.dip2px(mContext, 42)
+                    , CommentUtils.dip2px(mContext, 36)
                     , CommentUtils.dip2px(mContext, 42));
         }
         canvas.drawBitmap(mBitmap
                 , 0
-                , 0
+                , CommentUtils.dip2px(mContext, 54)
                 , mBitmapPaint);
     }
 
@@ -466,8 +478,8 @@ public class GeometricFigureView extends View {
             // path为圆形矩形。裁剪圆形，弧等都同理
             if(mClipRectF == null)
                 mClipRectF = new RectF(0, 0
-                        , CommentUtils.dip2px(mContext, 150)// 单位都是px
-                        , CommentUtils.dip2px(mContext, 150));
+                        , CommentUtils.dip2px(mContext, 75f)// 单位都是px
+                        , CommentUtils.dip2px(mContext, 150f));
             /**
              * RectF：矩形轮廓
              * rx：圆角矩形的圆角的x半径
@@ -475,8 +487,8 @@ public class GeometricFigureView extends View {
              * direction：cw:顺时针、CCW:逆时针
              */
             mClipPath.addRoundRect(mClipRectF
-                    , CommentUtils.dip2px(mContext, 15)
-                    , CommentUtils.dip2px(mContext, 15)
+                    , CommentUtils.dip2px(mContext, 7.5f)
+                    , CommentUtils.dip2px(mContext, 7.5f)
                     , Path.Direction.CW);
         }
         canvas.clipPath(mClipPath);
@@ -487,7 +499,7 @@ public class GeometricFigureView extends View {
      */
     private void drawRotate(Canvas canvas) {
         // 画10条线，画线的方法同上
-        for(int index = 0; index < 9; index ++){
+        for(int index = 0; index < 5; index ++){
             // 画布旋转的角度,每次+10
             canvas.rotate(10f);
             drawLine(canvas);
@@ -504,5 +516,21 @@ public class GeometricFigureView extends View {
          */
         canvas.translate(CommentUtils.dip2px(mContext, 75)
                 , CommentUtils.dip2px(mContext, 75));
+    }
+
+    private void drawRectInCropCanvas(Canvas canvas) {
+        if(cropPaint == null || cropRectF == null)
+            return;
+        // 在裁剪的画布里画一个矩形
+        cropPaint.setColor(0xffd96b63);
+        cropRectF.top = 0;
+        cropRectF.bottom = CommentUtils.dip2px(mContext, 15f);
+        canvas.drawRect(cropRectF, cropPaint);
+
+        // 再画一个矩形
+        cropPaint.setColor(0xff6cbe89);
+        cropRectF.top = CommentUtils.dip2px(mContext, 15f);
+        cropRectF.bottom = CommentUtils.dip2px(mContext, 75f);
+        canvas.drawRect(cropRectF, cropPaint);
     }
 }
