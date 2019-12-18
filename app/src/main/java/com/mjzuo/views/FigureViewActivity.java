@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.mjzuo.views.view.GeometricFigureView;
 
@@ -14,7 +13,7 @@ import com.mjzuo.views.view.GeometricFigureView;
  * @author mjzuo
  * @since 19/11/19
  */
-public class NormalViewDrawActivity extends BaseActivity implements View.OnClickListener {
+public class FigureViewActivity extends BaseActivity implements View.OnClickListener {
 
     // 基础图形绘制类view
     GeometricFigureView figureView;
@@ -22,14 +21,9 @@ public class NormalViewDrawActivity extends BaseActivity implements View.OnClick
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.normal_view_draw_activity);
+        setContentView(R.layout.figure_view_draw_activity);
 
         init();
-    }
-
-    @Override
-    String getHeadTitle() {
-        return "基础图形绘制";
     }
 
     private void init() {

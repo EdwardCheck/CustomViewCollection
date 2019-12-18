@@ -6,11 +6,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 
 public class CustomViewsDemo extends BaseActivity {
 
-    public static final int NORMAL_VIEW = 0; //基础绘制
+    /**
+     * 基础绘制
+     */
+    public static final int NORMAL_VIEW = 0;
+
+    /**
+     * 滴滴Ui汇总
+     */
+    public static final int UI_DIDI = 1;
 
     RecyclerView recyclerView;
 
@@ -21,11 +28,6 @@ public class CustomViewsDemo extends BaseActivity {
 
         recyclerView = findViewById(R.id.demo_task_recycler_view);
         initRecycler();
-    }
-
-    @Override
-    String getHeadTitle() {
-        return "view效果汇总";
     }
 
     private void initRecycler() {
@@ -43,7 +45,10 @@ public class CustomViewsDemo extends BaseActivity {
     private void clickItem(int itemPosition) {
         switch (itemPosition){
             case NORMAL_VIEW:
-                toIntent(NormalViewDrawActivity.class);
+                toIntent(FigureViewActivity.class);
+                break;
+            case UI_DIDI:
+                toIntent(DiDiUiActivity.class);
                 break;
         }
     }

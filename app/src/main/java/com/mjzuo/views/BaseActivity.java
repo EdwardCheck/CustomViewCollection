@@ -35,6 +35,4 @@ public abstract class BaseActivity extends AppCompatActivity {
             mImmersionBar.destroy();
         }
     }
-
-    abstract String getHeadTitle();
 }
