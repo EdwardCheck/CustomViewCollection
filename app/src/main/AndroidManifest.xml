@@ -16,8 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FigureViewActivity"/>
-        <activity android:name=".DiDiUiActivity"/>
+        <activity android:name=".ActivityFigureView"/>
+        <activity android:name=".ActivityDiDiUi"/>
+        <activity android:name=".ActivityRingScale"/>
     </application>
 
 </manifest>

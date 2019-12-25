@@ -15,16 +15,21 @@ public class CustomViewsDemo extends BaseActivity {
     public static final int NORMAL_VIEW = 0;
 
     /**
+     * 环形进度条
+     */
+    public static final int RING_SCALE = 1;
+
+    /**
      * 滴滴Ui汇总
      */
-    public static final int UI_DIDI = 1;
+    public static final int UI_DIDI = 2;
 
     RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.demo_task_activity);
+        setContentView(R.layout.activity_demo_task);
 
         recyclerView = findViewById(R.id.demo_task_recycler_view);
         initRecycler();
@@ -45,10 +50,13 @@ public class CustomViewsDemo extends BaseActivity {
     private void clickItem(int itemPosition) {
         switch (itemPosition){
             case NORMAL_VIEW:
-                toIntent(FigureViewActivity.class);
+                toIntent(ActivityFigureView.class);
+                break;
+            case RING_SCALE:
+                toIntent(ActivityRingScale.class);
                 break;
             case UI_DIDI:
-                toIntent(DiDiUiActivity.class);
+                toIntent(ActivityDiDiUi.class);
                 break;
         }
     }

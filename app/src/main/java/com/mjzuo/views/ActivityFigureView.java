@@ -13,7 +13,7 @@ import com.mjzuo.views.view.GeometricFigureView;
  * @author mjzuo
  * @since 19/11/19
  */
-public class FigureViewActivity extends BaseActivity implements View.OnClickListener {
+public class ActivityFigureView extends BaseActivity implements View.OnClickListener {
 
     // 基础图形绘制类view
     GeometricFigureView figureView;
@@ -21,7 +21,7 @@ public class FigureViewActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.figure_view_draw_activity);
+        setContentView(R.layout.activity_figure_view_draw_task);
 
         init();
     }

@@ -34,6 +34,7 @@ public class CustomViewRecycler extends RecyclerView.Adapter<CustomViewRecycler.
         if(cvData.size() != 0)
             cvData.clear();
         cvData.add("基础绘制");
+        cvData.add("环形刻度");
         cvData.add("滴滴Ui");
     }
 

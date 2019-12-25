@@ -3,7 +3,6 @@ package com.mjzuo.views;
 import android.animation.Animator;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -16,7 +15,7 @@ import com.mjzuo.views.view.StrokeTextView;
  * @author mjzuo
  * @since 19/12/17
  */
-public class DiDiUiActivity extends BaseActivity {
+public class ActivityDiDiUi extends BaseActivity {
 
     private StrokeTextView tvStrokeTxtLeft, tvStrokeTxtRight;
     private PointMarkerView pointMarkerView;
@@ -24,7 +23,7 @@ public class DiDiUiActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ui_didi_activity);
+        setContentView(R.layout.activity_ui_didi_task);
 
         tvStrokeTxtLeft = findViewById(R.id.tv_stroke_left);
         tvStrokeTxtRight = findViewById(R.id.tv_stroke_right);
