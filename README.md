@@ -19,3 +19,19 @@ https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/java
 <p align="left">
   <img width="260" height="450" src="https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/assets/imgfolder/spot.gif">
 </p>
+
+### android自定义view系列之圆环刻度条
+
+此效果由view绘制实现（左下），用到了圆形、过圆心弧及文字这几种基本图形的绘制api。刻度线的绘制则是通过不断旋转canvas画布来循环画线实现的，都是比较常规的绘制方案。颜色的渐变效果，即获取每个刻度所对应的颜色段内等比例的16进制颜色值。
+
+此view的难点是外围文字在环绕过程中，坐标位置的确认，即依圆心坐标，半径，扇形角度，如何计算出扇形终射线与圆弧交叉点的xy坐标，所幸网上都能找到解决方案及背后的数学模型。
+https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/java/com/mjzuo/views/view/RingScaleView.java
+
+可拖动环形刻度效果也由view绘制实现（左上），用到了圆弧、bitmap和文字的绘制api。刻度线的绘制则是通过不断旋转canvas画布来循环画线实现的。
+
+拖动的实现是在规定的区域内，当手指按下，手指滑动，手指弹起时，不断绘制对应的进度p，给人一种圆环被拖着动画的错觉，其实这只是不断重绘的结果。这里需要我们通过onTouchEvent方法来监听手势及获取当前坐标。难点在于这是一个弧形轨迹，我们怎么通过当前坐标来获取角度，再根据角度获取相对应的进度。需要注意的是，在我们拖动小图标时，我们需要定一个特定的接收事件的区域范围，只有当用户按在了规定的可滑动区域内，才能让用户拖动进度条，并不是在任意位置都能拖动小图标改变进度的。
+https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/java/com/mjzuo/views/view/SlideRingScaleView.java
+
+<p align="left">
+  <img width="260" height="450" src="https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/assets/imgfolder/scale.gif">
+</p>
