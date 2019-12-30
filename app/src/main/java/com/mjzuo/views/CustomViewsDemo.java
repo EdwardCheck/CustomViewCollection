@@ -20,9 +20,14 @@ public class CustomViewsDemo extends BaseActivity {
     public static final int RING_SCALE = 1;
 
     /**
-     * 滴滴Ui汇总
+     * 滴滴Ui
      */
     public static final int UI_DIDI = 2;
+
+    /**
+     * 网易云音乐鲸云音效
+     */
+    public static final int WX_CLOUD_MUSIC = 3;
 
     RecyclerView recyclerView;
 
@@ -57,6 +62,9 @@ public class CustomViewsDemo extends BaseActivity {
                 break;
             case UI_DIDI:
                 toIntent(ActivityDiDiUi.class);
+                break;
+            case WX_CLOUD_MUSIC:
+                toIntent(ActivityWYCloudMusic.class);
                 break;
         }
     }

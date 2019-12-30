@@ -36,6 +36,7 @@ public class CustomViewRecycler extends RecyclerView.Adapter<CustomViewRecycler.
         cvData.add("基础绘制");
         cvData.add("环形刻度");
         cvData.add("滴滴Ui");
+        cvData.add("鲸云音效");
     }
 
     @NonNull

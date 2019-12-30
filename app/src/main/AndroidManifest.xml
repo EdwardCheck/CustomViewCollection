@@ -19,6 +19,7 @@
         <activity android:name=".ActivityFigureView"/>
         <activity android:name=".ActivityDiDiUi"/>
         <activity android:name=".ActivityRingScale"/>
+        <activity android:name=".ActivityWYCloudMusic"/>
     </application>
 
 </manifest>
