@@ -55,7 +55,7 @@ public class MusicRippleView extends View {
     private MusicRippleView.DrawTimingThread drawTimingThread;
 
     // 动画间隔时间
-    private int animaBotIntervalTime = 200;
+    private int animaBotIntervalTime = 400;
 
     private Context mContext;
 
