@@ -33,5 +33,24 @@ https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/java
 https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/java/com/mjzuo/views/view/SlideRingScaleView.java
 
 <p align="left">
-  <img width="260" height="450" src="https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/assets/imgfolder/scale.gif">
+  <img width="300" height="580" src="https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/assets/imgfolder/scale.gif">
+</p>
+
+### android自定义view系列之鲸云音效
+
+此效果是由view绘制实现（左上），主要包括波纹扩散效果、圆球旋转缩小效果及颜色渐变效果。其中波纹扩散效果，是通过定时改变波纹半径实现的，此波纹是由先后两个空心圆组成，在实现过程中要注意时间和各自的尺寸变化。
+
+圆球效果同样是定时绘制的结果，平滑运动只是错觉。在这里是每隔200ms（波纹的定时值）在相应的位置进行绘制的，由于波纹扩散周期较短，所以我将圆球的隔旋转周期定为了45度，可根据业务自行修改。这里的难点是在于怎么找到圆球的圆心坐标， 即根据圆心坐标，半径，扇形角度来求扇形终射线与圆弧交叉点的xy坐标的问题。
+
+圆球的不断缩小效果，也是定时改变半径进行绘制的结果，很常规，在这里就不细说了。波纹和圆球的颜色渐变效果，由于不是渐变到全透明，所以我的alpha取值范围105-255。
+https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/java/com/mjzuo/views/view/MusicRippleView.java
+
+这个效果是由四段贝塞尔曲线来拟合实现的。但这种方式出来的效果跟真正的鲸云音效（动感环绕）差别很大，所以鲸云音效不太可能是由这种方式实现的。如果有更贴近的实现方法，希望不吝赐教。博客详情：
+https://mjzuo.blog.csdn.net/article/details/103762913
+
+运动中的圆环，是不断的随机更改控制点的坐标，并为起始点添加偏移量的结果，这是一个不断调试的过程…，需要不断调整控制点来控制凸起的幅度，很难找到一个完美的效果。可查看具体代码。
+https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/java/com/mjzuo/views/view/MusicBView.java
+
+<p align="left">
+  <img width="300" height="580" src="https://github.com/MingJieZuo/CustomViewCollection/blob/master/app/src/main/assets/imgfolder/bmusic.gif">
 </p>
