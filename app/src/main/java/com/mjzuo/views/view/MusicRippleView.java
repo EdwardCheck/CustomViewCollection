@@ -51,7 +51,6 @@ public class MusicRippleView extends View {
     private float cirAngel1;
 
     /** handler刷新*/
-    private HandlerThread thread;
     private MusicRippleView.DrawTimingThread drawTimingThread;
 
     // 动画间隔时间
@@ -106,9 +105,7 @@ public class MusicRippleView extends View {
 
     private void init() {
 
-        thread = new HandlerThread("draw_ripple_thread");
-        thread.start();
-        drawTimingThread = new MusicRippleView.DrawTimingThread(thread.getLooper());
+        drawTimingThread = new MusicRippleView.DrawTimingThread(Looper.getMainLooper());
 
         /** demo属性值写死了，推荐attrs*/
         mRMaxRadius = CommentUtils.dip2px(mContext, 80);

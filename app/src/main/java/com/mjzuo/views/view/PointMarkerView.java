@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -32,7 +31,6 @@ public class PointMarkerView extends View {
     private static final int MSG_RIPPLE_DRAW = 1;
     private static final byte[] timmerLock = new byte[0];
 
-    private HandlerThread thread;
     private DrawTimingThread drawTimingThread;
 
     // 动画间隔时间
@@ -246,9 +244,7 @@ public class PointMarkerView extends View {
     }
 
     private void init(Context context) {
-        thread = new HandlerThread("draw_timing_thread");
-        thread.start();
-        drawTimingThread = new DrawTimingThread(thread.getLooper());
+        drawTimingThread = new DrawTimingThread(Looper.getMainLooper());
 
         mTopCircleMaxRadius = CommentUtils.dip2px(context.getApplicationContext(), 12);
         mTopCirclePaint = new Paint();
